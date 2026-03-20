@@ -16,7 +16,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetch('/api/recipes')
-      .then((r) => r.json())
+      .then((r) => r.ok ? r.json() : [])
       .then((data: RecipeSummary[]) => { setRecipes(data); setLoading(false) })
   }, [])
 
