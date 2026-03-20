@@ -107,7 +107,7 @@ Ingredients with no parseable quantity (e.g. "a pinch of salt", "to taste", "1 l
 - Accessible via bottom nav
 
 ### Auth
-- Email/password via Clerk
+- Email/password and Google OAuth via Clerk
 - Single shared account for v1 (user + boyfriend)
 - All recipes and shopping list items scoped to `user_id`
 
