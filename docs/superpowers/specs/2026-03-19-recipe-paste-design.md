@@ -19,7 +19,7 @@ A mobile-first web app for clipping and managing recipes. Users paste a URL or r
 | Styling | Tailwind CSS |
 | Database | Neon (serverless Postgres) |
 | Auth | Clerk (email/password) |
-| AI parsing | Claude API |
+| AI parsing | Gemini 2.0 Flash |
 | Deployment | Vercel (free tier) |
 
 ### Data Model
@@ -57,11 +57,11 @@ steps
 
 When a user submits a URL or raw text, the server runs this pipeline in order. The `/api/parse` route requires authentication and enforces a per-user rate limit of 20 requests per hour.
 
-**Input limits:** Raw text input is capped at 50,000 characters server-side. Requests exceeding this are rejected before hitting Claude.
+**Input limits:** Raw text input is capped at 50,000 characters server-side. Requests exceeding this are rejected before hitting Gemini.
 
 1. **URL fetch** (URL input only) — fetch raw HTML server-side
 2. **JSON-LD extraction** — parse `<script type="application/ld+json">` blocks for a `Recipe` schema object. Considered **complete** if all three of `name`, `recipeIngredient`, and `recipeInstructions` are present and non-empty. If complete, extract and skip to step 4.
-3. **Claude HTML/text parsing** — send the raw HTML or pasted text to Claude with a structured extraction prompt. Expected response: `{ title, servings, ingredients: [{ name, quantity, unit }], steps: [{ order, text }] }`.
+3. **Gemini HTML/text parsing** — send the raw HTML or pasted text to Gemini 2.0 Flash with a structured extraction prompt. Expected response: `{ title, servings, ingredients: [{ name, quantity, unit }], steps: [{ order, text }] }`.
 4. **Save to database** — persist the structured recipe and thumbnail URL (from `og:image` if available, otherwise null).
 
 ### Non-numeric Ingredient Quantities
@@ -72,12 +72,12 @@ Ingredients with no parseable quantity (e.g. "a pinch of salt", "to taste", "1 l
 
 | Failure | User-facing response |
 |---------|---------------------|
-| Paywalled URL, no JSON-LD, Claude can't extract | "Couldn't read this page — try pasting the recipe text instead." |
+| Paywalled URL, no JSON-LD, Gemini can't extract | "Couldn't read this page — try pasting the recipe text instead." |
 | Parse succeeds but ingredients or steps are empty | Warning banner on recipe detail: "Some fields may be missing." |
 | Duplicate URL | "You already saved this recipe. View it or save a new copy?" Saving a new copy inserts a new row; both rows may share the same `source_url`. |
 | Input exceeds 50,000 characters | "That text is too long to process. Try trimming it to just the recipe." |
-| Claude API service failure (5xx / timeout) | "Something went wrong on our end — please try again in a moment." Distinct from a parse failure; no fallback, just retry. |
-| Claude API returns success but empty fields | Treated as a parse failure: show warning, save partial result. |
+| Gemini API service failure (5xx / timeout) | "Something went wrong on our end — please try again in a moment." Distinct from a parse failure; no fallback, just retry. |
+| Gemini API returns success but empty fields | Treated as a parse failure: show warning, save partial result. |
 
 ---
 
