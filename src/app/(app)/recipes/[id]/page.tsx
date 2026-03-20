@@ -20,34 +20,36 @@ export default function RecipeDetailPage() {
       .then((data: Recipe | null) => { setRecipe(data); setLoading(false) })
   }, [id])
 
-  if (loading) return <main className="flex min-h-screen items-center justify-center"><p className="text-stone-400">Loading...</p></main>
-  if (!recipe) return <main className="flex min-h-screen items-center justify-center"><p className="text-stone-400">Recipe not found.</p></main>
+  if (loading) return <main className="flex min-h-screen items-center justify-center"><p className="text-secondary">Loading...</p></main>
+  if (!recipe) return <main className="flex min-h-screen items-center justify-center"><p className="text-secondary">Recipe not found.</p></main>
 
   const hasEmptyFields = !recipe.ingredients.length || !recipe.steps.length
 
   return (
-    <main className="mx-auto max-w-lg px-4 pt-6 pb-8">
-      <button onClick={() => router.back()} className="mb-4 text-sm text-stone-500">← Back</button>
+    <main className="mx-auto max-w-lg pb-8">
+      <div className="px-4 pt-6">
+        <button onClick={() => router.back()} className="mb-4 text-sm font-medium text-primary">← Back</button>
+      </div>
 
-      <h1 className="mb-1 text-2xl font-bold text-stone-900">{recipe.title}</h1>
+      <h1 className="mb-2 pl-6 font-display text-6xl leading-tight text-on-surface">{recipe.title}</h1>
       {recipe.sourceUrl && (
         <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer"
-          className="mb-4 block text-sm text-emerald-600 underline">
+          className="mb-4 block pl-6 text-sm font-medium text-primary">
           View original
         </a>
       )}
 
       {hasEmptyFields && (
-        <div className="mb-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-700">
+        <div className="mx-4 mb-4 rounded-xl bg-error-container px-4 py-3 text-sm text-on-error-container">
           Some fields may be missing from this recipe.
         </div>
       )}
 
-      <section className="mb-6">
+      <section className="mb-6 px-4">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="font-semibold text-stone-700">Servings</h2>
+          <h2 className="text-sm font-medium uppercase tracking-wide text-secondary">Servings</h2>
           {recipe.servings && (
-            <span className="text-sm text-stone-500">
+            <span className="text-sm text-secondary">
               {scaleQuantity(Number(recipe.servings), scale)} servings
             </span>
           )}
@@ -56,51 +58,61 @@ export default function RecipeDetailPage() {
       </section>
 
       {recipe.ingredients.length > 0 && (
-        <section className="mb-4">
-          <h2 className="mb-3 font-semibold text-stone-700">Ingredients</h2>
-          <ul className="flex flex-col gap-2">
-            {recipe.ingredients.map((ing) => (
-              <li key={ing.id} className="text-stone-800">
-                {ing.quantity === null ? (
-                  <span className="text-stone-400">~ </span>
-                ) : (
-                  <span className="font-medium">{scaleQuantity(Number(ing.quantity), scale)}{ing.unit ? ` ${ing.unit}` : ''} </span>
-                )}
-                {ing.name}
-              </li>
-            ))}
-          </ul>
+        <section className="mb-4 px-4">
+          <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-secondary">Ingredients</h2>
+          <div className="rounded-xl bg-surface-low px-4 py-3">
+            <ul className="flex flex-col gap-4">
+              {recipe.ingredients.map((ing) => (
+                <li key={ing.id} className="text-on-surface">
+                  {ing.quantity === null ? (
+                    <span className="text-secondary">~ </span>
+                  ) : (
+                    <span className="font-medium">{scaleQuantity(Number(ing.quantity), scale)}{ing.unit ? ` ${ing.unit}` : ''} </span>
+                  )}
+                  {ing.name}
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       )}
 
-      <button
-        onClick={() => addIngredients(recipe.ingredients.map((ing) => ({
-          id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          recipeId: recipe.id,
-          name: ing.name,
-          quantity: ing.quantity !== null ? Number(ing.quantity) * scale : null,
-          unit: ing.unit,
-          checked: false,
-          order: ing.order,
-        })))}
-        className="mb-6 w-full rounded-xl bg-stone-100 py-3 font-medium text-stone-700 active:opacity-70"
-      >
-        Add to Shopping List
-      </button>
+      <div className="mb-6 px-4">
+        <button
+          onClick={() => addIngredients(recipe.ingredients.map((ing) => ({
+            id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            recipeId: recipe.id,
+            name: ing.name,
+            quantity: ing.quantity !== null ? Number(ing.quantity) * scale : null,
+            unit: ing.unit,
+            checked: false,
+            order: ing.order,
+          })))}
+          className="w-full rounded-full bg-secondary-container py-3 font-medium text-on-secondary-container active:opacity-70"
+        >
+          Add to Shopping List
+        </button>
+      </div>
 
       {recipe.steps.length > 0 && (
-        <section>
-          <h2 className="mb-3 font-semibold text-stone-700">Instructions</h2>
-          <ol className="flex flex-col gap-4">
-            {recipe.steps.map((step) => (
-              <li key={step.id} className="flex gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
-                  {step.order}
-                </span>
-                <p className="text-stone-800 leading-relaxed">{step.text}</p>
-              </li>
-            ))}
-          </ol>
+        <section className="px-4">
+          <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-secondary">Instructions</h2>
+          <div className="rounded-xl bg-surface-low px-4 py-4">
+            <ol className="flex flex-col gap-8">
+              {recipe.steps.map((step) => (
+                <li key={step.id} className="relative pl-2">
+                  {/* Wayfinder numeral: text-surface-high against bg-surface-low is intentionally near-invisible */}
+                  <span
+                    className="absolute -top-4 -left-2 font-display text-8xl leading-none text-surface-high select-none pointer-events-none"
+                    aria-hidden="true"
+                  >
+                    {step.order}
+                  </span>
+                  <p className="relative text-on-surface leading-relaxed">{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </section>
       )}
     </main>
