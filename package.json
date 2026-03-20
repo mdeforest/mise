@@ -10,6 +10,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.0.5",
     "@google/generative-ai": "^0.24.1",
+    "@heroicons/react": "^2.2.0",
     "@neondatabase/serverless": "^1.0.2",
     "drizzle-orm": "^0.45.1",
     "next": "16.2.0",
