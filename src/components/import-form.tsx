@@ -59,13 +59,13 @@ export function ImportForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex rounded-xl bg-stone-100 p-1">
+      <div className="flex rounded-full bg-surface-low p-1">
         {(['url', 'text'] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => { setTab(t); setValue('') }}
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors
-              ${tab === t ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500'}`}
+              ${tab === t ? 'bg-surface-lowest text-on-surface shadow-sm' : 'text-secondary'}`}
           >
             {t === 'url' ? 'Paste URL' : 'Paste Text'}
           </button>
@@ -78,7 +78,7 @@ export function ImportForm() {
           placeholder="https://..."
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-stone-900 outline-none focus:border-emerald-500"
+          className="w-full rounded-xl bg-surface-highest px-4 py-3 text-on-surface placeholder:text-secondary outline-none focus:bg-surface-lowest focus:outline-2 focus:outline-offset-0 focus:outline-ghost-border/20 transition-colors"
         />
       ) : (
         <textarea
@@ -86,16 +86,16 @@ export function ImportForm() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           rows={10}
-          className="w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-stone-900 outline-none focus:border-emerald-500"
+          className="w-full rounded-xl bg-surface-highest px-4 py-3 text-on-surface placeholder:text-secondary outline-none focus:bg-surface-lowest focus:outline-2 focus:outline-offset-0 focus:outline-ghost-border/20 transition-colors"
         />
       )}
 
-      {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="rounded-xl bg-error-container px-4 py-3 text-sm text-on-error-container">{error}</p>}
 
       <button
         onClick={handleImport}
         disabled={loading || !value.trim()}
-        className="w-full rounded-xl bg-emerald-500 py-4 text-base font-semibold text-white transition-opacity disabled:opacity-50 active:opacity-80"
+        className="w-full rounded-full bg-linear-to-br from-primary to-primary-container py-4 text-base font-medium text-on-primary transition-opacity disabled:opacity-50 active:opacity-80"
       >
         {loading ? 'Importing...' : 'Import Recipe'}
       </button>
