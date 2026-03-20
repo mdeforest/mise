@@ -12,13 +12,13 @@ const LABELS: Record<Scale, string> = { 0.5: '½x', 1: '1x', 2: '2x', 3: '3x' }
 
 export function ScaleControl({ value, onChange }: ScaleControlProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex rounded-full p-1 bg-surface-low">
       {SCALES.map((s) => (
         <button
           key={s}
           onClick={() => onChange(s)}
-          className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors
-            ${s === value ? 'bg-emerald-500 text-white' : 'bg-stone-100 text-stone-600'}`}
+          className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors
+            ${s === value ? 'bg-primary text-on-primary' : 'bg-surface-high text-on-surface-variant'}`}
         >
           {LABELS[s]}
         </button>

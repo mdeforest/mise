@@ -6,6 +6,7 @@ interface RecipeCardProps {
   title: string
   sourceUrl: string | null
   thumbnailUrl: string | null
+  priority?: boolean
 }
 
 function getDomain(url: string | null): string | null {
@@ -13,20 +14,20 @@ function getDomain(url: string | null): string | null {
   try { return new URL(url).hostname.replace('www.', '') } catch { return null }
 }
 
-export function RecipeCard({ id, title, sourceUrl, thumbnailUrl }: RecipeCardProps) {
+export function RecipeCard({ id, title, sourceUrl, thumbnailUrl, priority }: RecipeCardProps) {
   return (
-    <Link href={`/recipes/${id}`} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm active:opacity-70">
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-stone-100">
+    <Link href={`/recipes/${id}`} className="flex items-center gap-3 rounded-lg bg-surface-lowest p-3 shadow-[0_8px_32px_rgba(27,28,26,0.05)] active:opacity-70">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-surface-high">
         {thumbnailUrl ? (
-          <Image src={thumbnailUrl} alt={title} fill className="object-cover" unoptimized />
+          <Image src={thumbnailUrl} alt={title} fill className="object-cover" unoptimized priority={priority} />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-2xl">🍽️</div>
         )}
       </div>
       <div className="min-w-0">
-        <p className="truncate font-semibold text-stone-900">{title}</p>
+        <p className="truncate font-display font-normal text-on-surface">{title}</p>
         {getDomain(sourceUrl) && (
-          <p className="text-xs text-stone-500">{getDomain(sourceUrl)}</p>
+          <p className="text-xs text-secondary">{getDomain(sourceUrl)}</p>
         )}
       </div>
     </Link>

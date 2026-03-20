@@ -25,26 +25,30 @@ export default function HomePage() {
   )
 
   return (
-    <main className="mx-auto max-w-lg px-4 pt-6">
-      <h1 className="mb-4 text-2xl font-bold text-stone-900">My Recipes</h1>
-      <input
-        type="search"
-        placeholder="Search recipes..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mb-4 w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-stone-900 outline-none focus:border-emerald-500"
-      />
-      {loading ? (
-        <p className="text-center text-stone-400">Loading...</p>
-      ) : filtered.length === 0 ? (
-        <p className="text-center text-stone-400">
-          {recipes.length === 0 ? 'No recipes yet — add one!' : 'No results.'}
-        </p>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {filtered.map((r) => <RecipeCard key={r.id} {...r} />)}
-        </div>
-      )}
+    <main className="mx-auto max-w-lg pt-8 pb-6">
+      <h1 className="mb-6 pl-6 font-display text-4xl text-on-surface">Mise</h1>
+      <div className="mb-6 px-4">
+        <input
+          type="search"
+          placeholder="Search recipes..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-full bg-surface-highest px-5 py-3 text-on-surface placeholder:text-secondary outline-none focus:bg-surface-lowest focus:outline-2 focus:outline-offset-0 focus:outline-ghost-border/20 transition-colors"
+        />
+      </div>
+      <div className="rounded-xl bg-surface-low px-4 py-4">
+        {loading ? (
+          <p className="py-8 text-center text-secondary">Loading...</p>
+        ) : filtered.length === 0 ? (
+          <p className="py-8 text-center text-secondary">
+            {recipes.length === 0 ? 'No recipes yet — add one!' : 'No results.'}
+          </p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {filtered.map((r, i) => <RecipeCard key={r.id} {...r} priority={i === 0} />)}
+          </div>
+        )}
+      </div>
     </main>
   )
 }

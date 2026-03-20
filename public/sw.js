@@ -1,4 +1,4 @@
-const CACHE_NAME = 'recipe-paste-v1'
+const CACHE_NAME = 'recipe-paste-v2'
 
 self.addEventListener('install', () => self.skipWaiting())
 
@@ -13,10 +13,11 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
-  const isRecipePage = url.pathname.startsWith('/recipes/')
+  // Only cache API recipe data, not page navigations.
+  // Caching /recipes/* page URLs interferes with Next.js client-side routing.
   const isRecipeApi = url.pathname.startsWith('/api/recipes/')
 
-  if ((isRecipePage || isRecipeApi) && event.request.method === 'GET') {
+  if (isRecipeApi && event.request.method === 'GET') {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(event.request)
