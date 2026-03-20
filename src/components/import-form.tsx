@@ -45,8 +45,10 @@ export function ImportForm() {
     }
 
     if (!res.ok) {
-      const data = await res.json() as { error: string }
-      setError(data.error ?? 'Something went wrong.')
+      const text = await res.text()
+      let message = 'Something went wrong.'
+      try { message = (JSON.parse(text) as { error: string }).error ?? message } catch { /* non-JSON error */ }
+      setError(message)
       setLoading(false)
       return
     }
