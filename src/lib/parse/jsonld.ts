@@ -51,14 +51,29 @@ function extractSteps(instructions: SchemaRecipe['recipeInstructions']): Array<{
   }))
 }
 
+/**
+ * Flatten a JSON-LD value into a list of typed objects.
+ * Handles bare objects, arrays, and @graph wrappers (used by sites like Serious Eats).
+ */
+function flattenItems(data: unknown): SchemaRecipe[] {
+  if (Array.isArray(data)) return data.flatMap(flattenItems)
+  if (typeof data === 'object' && data !== null) {
+    const obj = data as Record<string, unknown>
+    if ('@graph' in obj && Array.isArray(obj['@graph'])) return flattenItems(obj['@graph'])
+    return [obj as unknown as SchemaRecipe]
+  }
+  return []
+}
+
 export function extractJsonLd(html: string): ParsedRecipe | null {
-  const scriptRegex = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi
+  // Accept both double and single quotes around the type attribute value
+  const scriptRegex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
   let match: RegExpExecArray | null
 
   while ((match = scriptRegex.exec(html)) !== null) {
     try {
-      const data = JSON.parse(match[1]) as SchemaRecipe | SchemaRecipe[]
-      const items: SchemaRecipe[] = Array.isArray(data) ? data : [data]
+      const data = JSON.parse(match[1]) as unknown
+      const items = flattenItems(data)
       const recipe = items.find((item) => item['@type'] === 'Recipe')
 
       if (!recipe) continue

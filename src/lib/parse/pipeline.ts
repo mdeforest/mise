@@ -13,14 +13,21 @@ export type PipelineResult =
 const MAX_INPUT_LENGTH = 50_000
 
 /**
- * Strips non-text HTML elements (scripts, styles, SVG, etc.) and returns
- * plain text. Falls back to truncation if the stripped text is still too long.
- * Note: nav/header/footer are NOT stripped — recipe sites frequently put recipe
- * content inside these semantic elements.
+ * Strips non-text HTML elements and returns plain text trimmed to MAX_INPUT_LENGTH.
+ * Prefers content inside <main> or <article> to avoid stripping recipe text that
+ * lives outside those containers on Next.js / SPA sites (where most content is in
+ * __NEXT_DATA__ script tags and the visible HTML is a thin scaffold).
  */
 function trimToRecipeText(html: string): string {
-  // Remove elements that never contain readable recipe text
-  const stripped = html
+  // On Next.js / SPA pages the bulk of content lives in <script> tags.
+  // Prefer the rendered <main> or <article> subtree when present so we don't
+  // hand Gemini a nearly-empty string after stripping scripts.
+  const mainMatch = /<main[^>]*>([\s\S]*?)<\/main>/i.exec(html)
+    ?? /<article[^>]*>([\s\S]*?)<\/article>/i.exec(html)
+  const source = mainMatch ? mainMatch[1] : html
+
+  const stripped = source
+    // Remove elements that never contain readable recipe text
     .replace(/<(script|style|noscript|svg|iframe)[^>]*>[\s\S]*?<\/\1>/gi, '')
     // Strip remaining HTML tags
     .replace(/<[^>]+>/g, ' ')
