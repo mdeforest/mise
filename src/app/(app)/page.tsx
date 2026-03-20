@@ -45,7 +45,7 @@ export default function HomePage() {
           </p>
         ) : (
           <div className="flex flex-col gap-3">
-            {filtered.map((r) => <RecipeCard key={r.id} {...r} />)}
+            {filtered.map((r, i) => <RecipeCard key={r.id} {...r} priority={i === 0} />)}
           </div>
         )}
       </div>
