@@ -13,14 +13,15 @@ export type PipelineResult =
 const MAX_INPUT_LENGTH = 50_000
 
 /**
- * Strips HTML boilerplate (scripts, styles, nav, header, footer) and returns
+ * Strips non-text HTML elements (scripts, styles, SVG, etc.) and returns
  * plain text. Falls back to truncation if the stripped text is still too long.
+ * Note: nav/header/footer are NOT stripped — recipe sites frequently put recipe
+ * content inside these semantic elements.
  */
 function trimToRecipeText(html: string): string {
-  // Remove elements that never contain recipe content
+  // Remove elements that never contain readable recipe text
   const stripped = html
     .replace(/<(script|style|noscript|svg|iframe)[^>]*>[\s\S]*?<\/\1>/gi, '')
-    .replace(/<(nav|header|footer)[^>]*>[\s\S]*?<\/\1>/gi, '')
     // Strip remaining HTML tags
     .replace(/<[^>]+>/g, ' ')
     // Collapse whitespace
