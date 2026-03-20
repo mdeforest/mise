@@ -64,7 +64,7 @@ export function ImportForm() {
           <button
             key={t}
             onClick={() => { setTab(t); setValue('') }}
-            className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors
+            className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors
               ${tab === t ? 'bg-surface-lowest text-on-surface shadow-sm' : 'text-secondary'}`}
           >
             {t === 'url' ? 'Paste URL' : 'Paste Text'}

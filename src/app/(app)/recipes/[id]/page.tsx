@@ -34,7 +34,7 @@ export default function RecipeDetailPage() {
       <h1 className="mb-2 pl-6 font-display text-6xl leading-tight text-on-surface">{recipe.title}</h1>
       {recipe.sourceUrl && (
         <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer"
-          className="mb-4 block pl-6 text-sm font-medium text-primary">
+          className="mb-4 block pl-6 text-sm font-medium text-primary no-underline">
           View original
         </a>
       )}
