@@ -75,7 +75,6 @@ export async function POST(req: NextRequest) {
 
   if (!result.recipe) {
     const messages: Record<string, string> = {
-      input_too_long: 'That text is too long to process. Try trimming it to just the recipe.',
       fetch_failed: "Couldn't read this page — try pasting the recipe text instead.",
       parse_failed: "Couldn't read this page — try pasting the recipe text instead.",
       service_error: 'Something went wrong on our end — please try again in a moment.',

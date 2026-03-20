@@ -75,7 +75,7 @@ export default function RecipeDetailPage() {
 
       <button
         onClick={() => addIngredients(recipe.ingredients.map((ing) => ({
-          id: crypto.randomUUID(),
+          id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
           recipeId: recipe.id,
           name: ing.name,
           quantity: ing.quantity !== null ? Number(ing.quantity) * scale : null,

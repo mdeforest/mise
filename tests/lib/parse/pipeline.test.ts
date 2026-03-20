@@ -44,9 +44,26 @@ describe('runPipeline', () => {
     expect(result.error).toBe('parse_failed')
   })
 
-  it('rejects input exceeding 50000 characters', async () => {
+  it('strips and truncates oversized input then attempts parsing', async () => {
+    mockExtract.mockReturnValue(null)
+    mockGemini.mockResolvedValue(null)
     const result = await runPipeline({ type: 'text', content: 'x'.repeat(50001) })
-    expect(result.error).toBe('input_too_long')
-    expect(mockGemini).not.toHaveBeenCalled()
+    // Should attempt Gemini rather than hard-rejecting
+    expect(mockGemini).toHaveBeenCalled()
+    expect(result.error).toBe('parse_failed')
+  })
+
+  it('strips HTML boilerplate before sending oversized content to Gemini', async () => {
+    mockExtract.mockReturnValue(null)
+    mockGemini.mockResolvedValue(MOCK_RECIPE)
+    const noise = '<script>var x=1;</script><nav>menu</nav>'
+    const recipeBody = '<p>1 cup flour</p>'.repeat(100)
+    const oversized = noise + recipeBody + 'a'.repeat(50_000)
+    const result = await runPipeline({ type: 'text', content: oversized })
+    expect(result.recipe).toEqual(MOCK_RECIPE)
+    const [calledWith] = mockGemini.mock.calls[0] as [string]
+    // Script and nav content should be stripped
+    expect(calledWith).not.toContain('var x=1')
+    expect(calledWith).not.toContain('<script>')
   })
 })
